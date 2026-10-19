@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEO Scanner — Free AI Search Visibility Score</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">AEO <span>Scanner</span></a>
+  </div>
+</header>
+
+<main>
+  <canvas id="wave" class="wave-canvas"></canvas>
+  <section class="hero">
+    <h1>Most Websites Are Invisible to AI.<br><em>Is Yours?</em></h1>
+    <p class="sub">Run the free 26-point AEO scan.</p>
+    <form class="scan-form" method="POST" action="/scan">
+      <input type="text" name="url" value="{{ url or '' }}" placeholder="https://yourdomain.com" required>
+      <button type="submit">Scan &rarr;</button>
+    </form>
+    {% if error %}
+      <div class="error-banner" style="display:block">
+        <strong>Scan failed.</strong> {{ error }}
+      </div>
+    {% endif %}
+  </section>
+
+  {% if result %}
+  <section class="report">
+    <div class="wrap">
+      <h2>{{ result.domain }}</h2>
+      <p class="domain">{{ result.final_url }}</p>
+      <div class="dial-wrap">
+        <svg class="dial" viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="dialGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#6b6b6b"/>
+              <stop offset="100%" stop-color="#f5f5f5"/>
+            </linearGradient>
+          </defs>
+          <circle class="dial-bg" cx="100" cy="100" r="86"></circle>
+          <circle class="dial-fill" id="dial-fill" cx="100" cy="100" r="86"></circle>
+        </svg>
+        <div class="dial-center">
+          <span class="dial-num" id="dial-num">0</span>
+          <span class="dial-grade">Grade {{ result.grade }}</span>
+        </div>
+        <p class="score-sub">{{ result.earned }} / {{ result.max }} pts</p>
+      </div>
+
+      <div class="cat-grid">
+        {% for name, cat in result.categories.items() %}
+        <div class="cat-card">
+          <h4>{{ name }}</h4>
+          <div class="cat-score">{{ cat.score }}%</div>
+          <div class="cat-bar"><div class="cat-bar-fill" data-w="{{ cat.score }}"></div></div>
+          <div class="cat-detail">{{ cat.passed }}/{{ cat.count }} checks passed</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <h3 class="issues-title">All checks</h3>
+      <ul class="check-list">
+        {% for c in result.checks %}
+        <li class="check-item">
+          <div class="check-top">
+            <span class="check-icon {{ 'pass' if c.passed else 'fail' }}">{{ '✓' if c.passed else '✕' }}</span>
+            <span class="check-name">{{ c.name }}</span>
+            <span class="check-cat">{{ c.category }} · {{ c.weight }}pt</span>
+          </div>
+          <div class="check-detail">{{ c.detail }}</div>
+          {% if not c.passed %}
+          <div class="check-fix"><strong>Fix:</strong> {{ c.fix }}</div>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endif %}
+</main>
+
+<footer class="site-footer">
+  <p>&copy; 2026 AEO Scanner &bull; Scores reflect publicly detectable signals</p>
+</footer>
+
+<script>
+(function(){
+  const c = document.getElementById("wave");
+  if (c) {
+    const ctx = c.getContext("2d");
+    function resize(){ c.width = window.innerWidth; c.height = 260; }
+    resize(); window.addEventListener("resize", resize);
+    let t = 0;
+    function draw(){
+      ctx.clearRect(0,0,c.width,c.height);
+      for (let i=0;i<3;i++){
+        ctx.beginPath();
+        for (let x=0;x<=c.width;x+=4){
+          const y = c.height/2 + Math.sin((x*0.008)+t+i*1.2)*28 + Math.sin((x*0.02)+t*0.7+i)*12;
+          if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.strokeStyle = `rgba(192,192,192,${0.12 - i*0.03})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+      t += 0.02;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+  const fill = document.getElementById("dial-fill");
+  if (fill) {
+    const C = 2*Math.PI*86;
+    fill.style.strokeDasharray = C;
+    fill.style.strokeDashoffset = C;
+    const target = {{ result.score }};
+    const num = document.getElementById("dial-num");
+    let start = null;
+    function anim(ts){
+      if (!start) start = ts;
+      const p = Math.min((ts-start)/1200,1);
+      const e = 1 - Math.pow(1-p,3);
+      fill.style.strokeDashoffset = C*(1 - (target/100)*e);
+      num.textContent = Math.round(target*e);
+      if (p<1) requestAnimationFrame(anim);
+    }
+    requestAnimationFrame(anim);
+  }
+  document.querySelectorAll(".cat-bar-fill").forEach(el=>{
+    const w = el.getAttribute("data-w");
+    setTimeout(()=>{ el.style.width = w + "%"; }, 100);
+  });
+})();
+</script>
+</body>
+</html>
