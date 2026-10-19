@@ -3,31 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AEO Scanner — Free AI Search Visibility Score</title>
+<title>Open Engine — Free AI Search Visibility Score</title>
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+<div class="terminal-overlay" id="termOverlay"><div class="terminal" id="termBox"></div></div>
+
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="/">AEO <span>Scanner</span></a>
+    <a class="brand" href="/">Open <span>Engine</span></a>
+    <a href="/compare" style="color:var(--muted);text-decoration:none;font-size:.85rem;">Compare</a>
   </div>
 </header>
 
 <main>
   <canvas id="wave" class="wave-canvas"></canvas>
   <section class="hero">
-    <h1>Most Websites Are Invisible to AI.<br><em>Is Yours?</em></h1>
-    <p class="sub">Run the free 26-point AEO scan.</p>
+    <div class="hero-badge">ENGINE v2026.05 &bull; GOOGLE I/O 2026 READY</div>
+    <h1 class="hero-title">
+      <span class="hero-line">Most websites are</span>
+      <span class="hero-line neon">invisible to AI.</span>
+      <span class="hero-line">Is yours?</span>
+    </h1>
+    <p class="hero-sub">AEO is how your site earns citations from ChatGPT, Google AI Mode, Perplexity and Copilot. Run the free 26-point scan in under 30 seconds.</p>
     <form class="scan-form" method="POST" action="/scan">
       <input type="text" name="url" value="{{ url or '' }}" placeholder="https://yourdomain.com" required>
-      <button type="submit">Scan &rarr;</button>
+      <button type="submit">Scan now &rarr;</button>
     </form>
+    <p class="hero-note">No sign-up &bull; Free &bull; Unlimited scans</p>
     {% if error %}
-      <div class="error-banner" style="display:block">
-        <strong>Scan failed.</strong> {{ error }}
-      </div>
+      <div class="error-banner" style="display:block">{{ error }}</div>
     {% endif %}
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" data-target="60">0</span><span class="stat-label">% searches end without a click</span></div>
+      <div class="stat"><span class="stat-num" data-target="26">0</span><span class="stat-label">weighted AEO checks</span></div>
+      <div class="stat"><span class="stat-num" data-target="100">0</span><span class="stat-label">% client perfect score</span></div>
+    </div>
   </section>
 
   {% if result %}
@@ -85,17 +97,34 @@
   </section>
   {% endif %}
 
+
+  <section class="history">
+    <div class="wrap">
+      <h2 class="showcase-title">Recent scans</h2>
+      <div class="history-list">
+        {% for h in (history or []) %}
+        <div class="history-item">
+          <span class="history-url">{{ h[0] }}</span>
+          <span class="history-score">{{ h[1] }} <small>{{ h[2] }}</small></span>
+          <span class="history-date">{{ h[3][:10] }}</span>
+        </div>
+        {% else %}
+        <p style="color:var(--muted);text-align:center;">No scans yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
   <section class="showcase">
     <div class="wrap">
       <h2 class="showcase-title">Tools that don't need AI to be powerful</h2>
       <p class="showcase-sub">Everything runs in your browser. No API keys. No tokens. No cloud.</p>
       <div class="showcase-grid">
-        <div class="tool-card"><div class="tool-icon">🧬</div><h3>Schema Generator</h3><p>Build JSON-LD Organization, Product, FAQ and HowTo markup in seconds.</p></div>
-        <div class="tool-card"><div class="tool-icon">🗺️</div><h3>Sitemap Builder</h3><p>Paste URLs, get a valid XML sitemap ready to drop at /sitemap.xml.</p></div>
-        <div class="tool-card"><div class="tool-icon">🤖</div><h3>robots.txt Writer</h3><p>Generate an AI-crawler-friendly robots.txt with the full 2026 bot fleet.</p></div>
-        <div class="tool-card"><div class="tool-icon">🏷️</div><h3>Meta Tag Forge</h3><p>Title, description, Open Graph and Twitter cards — validated live.</p></div>
-        <div class="tool-card"><div class="tool-icon">📡</div><h3>llms.txt Crafter</h3><p>Auto-draft an llms.txt overview of any site for LLM ingestion.</p></div>
-        <div class="tool-card"><div class="tool-icon">⚡</div><h3>Speed Audit</h3><p>Core Web Vitals snapshot: LCP, CLS, INP with fix hints.</p></div>
+        <div class="tool-card"><div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div><h3>Schema Generator</h3><p>Build JSON-LD Organization, Product, FAQ and HowTo markup in seconds.</p></div>
+        <div class="tool-card"><div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg></div><h3>Sitemap Builder</h3><p>Paste URLs, get a valid XML sitemap ready to drop at /sitemap.xml.</p></div>
+        <div class="tool-card"><div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="7" width="14" height="12" rx="2"/><path d="M12 3v4M8 12h.01M16 12h.01M9 16h6"/></svg></div><h3>robots.txt Writer</h3><p>Generate an AI-crawler-friendly robots.txt with the full 2026 bot fleet.</p></div>
+        <div class="tool-card"><div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V4h9l8.6 9.4z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></div><h3>Meta Tag Forge</h3><p>Title, description, Open Graph and Twitter cards — validated live.</p></div>
+        <div class="tool-card"><div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20v-4M5 12a7 7 0 0114 0M2 9a12 12 0 0120 0"/></svg></div><h3>llms.txt Crafter</h3><p>Auto-draft an llms.txt overview of any site for LLM ingestion.</p></div>
+        <div class="tool-card"><div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h3>Speed Audit</h3><p>Core Web Vitals snapshot: LCP, CLS, INP with fix hints.</p></div>
       </div>
       <div id="three-host" class="three-host">
         <canvas id="three-canvas"></canvas>
@@ -106,7 +135,7 @@
 </main>
 
 <footer class="site-footer">
-  <p>&copy; 2026 AEO Scanner &bull; Scores reflect publicly detectable signals</p>
+  <p>&copy; 2026 Open Engine &bull; Scores reflect publicly detectable signals</p>
 </footer>
 
 <script>
@@ -193,6 +222,54 @@
   }
   animate();
   window.addEventListener("resize", ()=>{ camera.aspect=host.clientWidth/host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth,host.clientHeight); });
+})();
+</script>
+
+<script>
+(function(){
+  document.querySelectorAll(".stat-num").forEach(el=>{
+    const target=+el.getAttribute("data-target");
+    let start=null;
+    function tick(ts){ if(!start) start=ts; const p=Math.min((ts-start)/1400,1); const e=1-Math.pow(1-p,3); el.textContent=Math.round(target*e)+(target===100||target===60?"%":""); if(p<1) requestAnimationFrame(tick); }
+    requestAnimationFrame(tick);
+  });
+})();
+</script>
+
+<script>
+(function(){
+  const form = document.querySelector(".scan-form");
+  const overlay = document.getElementById("termOverlay");
+  const box = document.getElementById("termBox");
+  if (!form) return;
+  form.addEventListener("submit", function(e){
+    const url = (form.querySelector('input[name="url"]').value || "").trim();
+    if (!url) return;
+    e.preventDefault();
+    overlay.classList.add("active");
+    box.innerHTML = "";
+    const lines = [
+      ["$","resolving host..."],
+      ["$","fetching html..."],
+      ["$","parsing dom + json-ld..."],
+      ["$","checking robots.txt + ai crawlers..."],
+      ["$","probing llms.txt, mcp.json, feeds..."],
+      ["$","scoring 26 checks..."],
+      ["$","rendering report..."]
+    ];
+    let i=0;
+    function next(){
+      if (i >= lines.length){ setTimeout(()=>form.submit(), 300); return; }
+      const d=document.createElement("div");
+      d.className="terminal-line";
+      d.innerHTML='<span class="tag">'+lines[i][0]+'</span> '+lines[i][1]+'<span class="terminal-cursor"></span>';
+      box.appendChild(d);
+      box.scrollTop = box.scrollHeight;
+      i++;
+      setTimeout(next, 320);
+    }
+    next();
+  });
 })();
 </script>
 </body>

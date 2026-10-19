@@ -411,6 +411,46 @@ def run_scan(raw_url: str) -> dict:
         "; ".join(fresh_bits) if fresh_bits else "No Last-Modified, dateModified or <time> signals.",
         "Expose dateModified in schema and Last-Modified headers so agents trust recency.")
 
+    # ---- Page speed --------------------------------------------------------
+    ttfb = resp.elapsed.total_seconds()
+    scripts = soup.find_all("script", src=True)
+    styles = soup.find_all("link", rel=lambda v: v and "stylesheet" in [x.lower() for x in v])
+    render_blocking = sum(1 for sc in scripts if not sc.get("async") and not sc.get("defer"))
+    add("ttfb", "Site Health", "Time to first byte",
+        ttfb < 0.8, 2,
+        f"TTFB {ttfb:.2f}s." if ttfb < 0.8 else f"Slow TTFB {ttfb:.2f}s.",
+        "Reduce server response time (target < 800ms).")
+    add("render-blocking", "Site Health", "Render-blocking scripts",
+        render_blocking <= 2, 2,
+        f"{render_blocking} render-blocking script(s).",
+        "Add async/defer to non-critical scripts.")
+    add("resource-count", "Site Health", "Resource weight",
+        len(scripts) + len(styles) <= 20, 1,
+        f"{len(scripts)} scripts, {len(styles)} stylesheets.",
+        "Bundle and reduce third-party scripts/styles.")
+
+    # ---- Broken links ------------------------------------------------------
+    import urllib.parse as _up
+    internal_links = []
+    for a in soup.find_all("a", href=True):
+        h = a["href"]
+        if h.startswith("#") or h.startswith("mailto:") or h.startswith("tel:"):
+            continue
+        full = _up.urljoin(final_url, h)
+        if _up.urlparse(full).hostname == _up.urlparse(final_url).hostname:
+            internal_links.append(full)
+    internal_links = list(dict.fromkeys(internal_links))[:25]
+    broken = 0
+    for link in internal_links:
+        r = try_fetch(link)
+        if r is None or not r.ok:
+            broken += 1
+    link_ok = broken == 0 or len(internal_links) == 0
+    add("broken-links", "Site Health", "Broken internal links",
+        link_ok, 3,
+        f"{broken}/{len(internal_links)} internal links broken." if internal_links else "No internal links to check.",
+        "Fix or remove broken internal links (404s).")
+
     # ---- Score --------------------------------------------------------------
     total = sum(c["weight"] for c in checks)
     earned = sum(c["weight"] for c in checks if c["passed"])

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Engine — Compare</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="site-header"><div class="wrap"><a class="brand" href="/">Open <span>Engine</span></a></div></header>
+<main>
+  <section class="hero">
+    <h1 class="hero-title"><span class="hero-line">Competitor</span><span class="hero-line neon">comparison.</span></h1>
+    <form class="scan-form" method="POST" action="/compare" style="flex-direction:column;max-width:540px;">
+      <input type="text" name="url1" value="{{ u1 }}" placeholder="https://yoursite.com" required>
+      <input type="text" name="url2" value="{{ u2 }}" placeholder="https://competitor.com" required>
+      <button type="submit">Compare &rarr;</button>
+    </form>
+  </section>
+  {% if r1 or r2 %}
+  <section class="report"><div class="wrap">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      {% for r,u in [(r1,u1),(r2,u2)] %}
+      <div>
+        <h2>{{ u }}</h2>
+        {% if r and r.error %}<p style="color:var(--fail)">{{ r.error }}</p>
+        {% elif r %}
+        <p style="font-size:2.4rem;font-weight:700;color:var(--neon)">{{ r.score }}/100 <small style="font-size:.9rem;color:var(--muted)">{{ r.grade }}</small></p>
+        <p style="color:var(--muted)">{{ r.earned }}/{{ r.max }} pts</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div></section>
+  {% endif %}
+</main>
+<footer class="site-footer"><p>&copy; 2026 Open Engine</p></footer>
+</body>
+</html>
