@@ -74,6 +74,7 @@
             <span class="check-cat">{{ c.category }} · {{ c.weight }}pt</span>
           </div>
           <div class="check-detail">{{ c.detail }}</div>
+          <span class="sev sev-{{ c.severity }}">{{ c.severity }}</span>
           {% if not c.passed %}
           <div class="check-fix"><strong>Fix:</strong> {{ c.fix }}</div>
           {% endif %}
@@ -83,6 +84,25 @@
     </div>
   </section>
   {% endif %}
+
+  <section class="showcase">
+    <div class="wrap">
+      <h2 class="showcase-title">Tools that don't need AI to be powerful</h2>
+      <p class="showcase-sub">Everything runs in your browser. No API keys. No tokens. No cloud.</p>
+      <div class="showcase-grid">
+        <div class="tool-card"><div class="tool-icon">🧬</div><h3>Schema Generator</h3><p>Build JSON-LD Organization, Product, FAQ and HowTo markup in seconds.</p></div>
+        <div class="tool-card"><div class="tool-icon">🗺️</div><h3>Sitemap Builder</h3><p>Paste URLs, get a valid XML sitemap ready to drop at /sitemap.xml.</p></div>
+        <div class="tool-card"><div class="tool-icon">🤖</div><h3>robots.txt Writer</h3><p>Generate an AI-crawler-friendly robots.txt with the full 2026 bot fleet.</p></div>
+        <div class="tool-card"><div class="tool-icon">🏷️</div><h3>Meta Tag Forge</h3><p>Title, description, Open Graph and Twitter cards — validated live.</p></div>
+        <div class="tool-card"><div class="tool-icon">📡</div><h3>llms.txt Crafter</h3><p>Auto-draft an llms.txt overview of any site for LLM ingestion.</p></div>
+        <div class="tool-card"><div class="tool-icon">⚡</div><h3>Speed Audit</h3><p>Core Web Vitals snapshot: LCP, CLS, INP with fix hints.</p></div>
+      </div>
+      <div id="three-host" class="three-host">
+        <canvas id="three-canvas"></canvas>
+        <div class="three-label">Live · rotating AEO signal core</div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -136,6 +156,43 @@
     const w = el.getAttribute("data-w");
     setTimeout(()=>{ el.style.width = w + "%"; }, 100);
   });
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const host = document.getElementById("three-host");
+  const canvas = document.getElementById("three-canvas");
+  if (!host || !canvas || typeof THREE === "undefined") return;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, host.clientWidth/host.clientHeight, 0.1, 100);
+  camera.position.z = 6;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setSize(host.clientWidth, host.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const geo = new THREE.IcosahedronGeometry(1.6, 1);
+  const mat = new THREE.MeshStandardMaterial({ color: 0x39ff14, wireframe: true, emissive: 0x0a3d00, emissiveIntensity: 0.6 });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.02, 16, 100), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 }));
+  ring.rotation.x = Math.PI/2;
+  scene.add(ring);
+  const light = new THREE.PointLight(0x39ff14, 1.2, 20);
+  light.position.set(3,3,3);
+  scene.add(light);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+  let mx=0, my=0;
+  host.addEventListener("mousemove", e=>{ const r=host.getBoundingClientRect(); mx=(e.clientX-r.left)/r.width-0.5; my=(e.clientY-r.top)/r.height-0.5; });
+  function animate(){
+    requestAnimationFrame(animate);
+    mesh.rotation.x += 0.003 + my*0.02;
+    mesh.rotation.y += 0.005 + mx*0.02;
+    ring.rotation.z += 0.004;
+    renderer.render(scene,camera);
+  }
+  animate();
+  window.addEventListener("resize", ()=>{ camera.aspect=host.clientWidth/host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth,host.clientHeight); });
 })();
 </script>
 </body>

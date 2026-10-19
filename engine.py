@@ -197,10 +197,10 @@ def run_scan(raw_url: str) -> dict:
 
     checks = []
 
-    def add(cid, category, name, passed, weight, detail, fix):
+    def add(cid, category, name, passed, weight, detail, fix, severity="medium"):
         checks.append({
             "id": cid, "category": category, "name": name,
-            "passed": bool(passed), "weight": weight,
+            "passed": bool(passed), "weight": weight, "severity": severity,
             "detail": detail, "fix": fix,
         })
 
@@ -424,6 +424,14 @@ def run_scan(raw_url: str) -> dict:
         if c["passed"]:
             cat["earned"] += c["weight"]
             cat["passed"] += 1
+    for c in checks:
+        if c["weight"] >= 4:
+            c["severity"] = "high"
+        elif c["weight"] >= 3:
+            c["severity"] = "medium"
+        else:
+            c["severity"] = "low"
+
     for cat in categories.values():
         cat["score"] = round(cat["earned"] / cat["total"] * 100) if cat["total"] else 0
 

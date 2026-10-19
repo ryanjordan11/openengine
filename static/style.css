@@ -162,3 +162,30 @@ body {
   height: 100%; width: 0%; background: linear-gradient(90deg, #6b6b6b, #f5f5f5);
   border-radius: 2px; transition: width 1s cubic-bezier(.2,.8,.2,1);
 }
+
+/* fluorescent accents */
+:root { --neon: #39ff14; --neon2: #ffe600; }
+.hero h1 em { color: var(--neon); }
+.scan-form button { background: var(--neon); color: #000; }
+.scan-form button:hover { box-shadow: 0 0 24px rgba(57,255,20,.45); }
+.site-header .brand span { color: var(--neon); }
+.cat-card .cat-score { color: var(--neon); }
+.dial-fill { stroke: var(--neon); }
+.cat-bar-fill { background: linear-gradient(90deg, #1a6b0a, var(--neon)); }
+.sev { font-size:.65rem; letter-spacing:.08em; text-transform:uppercase; padding:2px 8px; border-radius:3px; margin-left:8px; }
+.sev-high { color: var(--neon2); border:1px solid var(--neon2); }
+.sev-medium { color: var(--silver); border:1px solid var(--border); }
+.sev-low { color: var(--muted); border:1px solid var(--border2); }
+
+.showcase { padding: 64px 0 80px; border-top: 1px solid var(--border2); }
+.showcase-title { text-align: center; font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+.showcase-sub { text-align: center; color: var(--muted); margin-bottom: 36px; font-size: 0.95rem; }
+.showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; margin-bottom: 48px; }
+.tool-card { background: var(--card); border: 1px solid var(--border2); border-radius: 10px; padding: 22px; transition: transform .2s, border-color .2s; }
+.tool-card:hover { transform: translateY(-4px); border-color: var(--neon); box-shadow: 0 8px 30px rgba(57,255,20,.08); }
+.tool-icon { font-size: 1.6rem; margin-bottom: 10px; }
+.tool-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+.tool-card p { color: var(--muted); font-size: 0.85rem; }
+.three-host { position: relative; height: 360px; border: 1px solid var(--border2); border-radius: 12px; overflow: hidden; background: radial-gradient(circle at center, #0a1a0a 0%, #050505 70%); }
+#three-canvas { width: 100%; height: 100%; display: block; }
+.three-label { position: absolute; bottom: 14px; left: 18px; font-size: 0.72rem; color: var(--neon); letter-spacing: 0.1em; text-transform: uppercase; }
