@@ -70,5 +70,9 @@ def compare():
             r2 = {"error": str(e)}
     return render_template("compare.html", r1=r1, r2=r2, u1=u1, u2=u2)
 
+@app.get("/tools")
+def tools():
+    return render_template("tools.html")
+
 if __name__ == "__main__":
     app.run(debug=True, port=8000)

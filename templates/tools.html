@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Engine — Tools</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="site-header"><div class="wrap"><a class="brand" href="/">Open <span>Engine</span></a> <a href="/compare" style="color:var(--muted);text-decoration:none;font-size:.85rem;margin-left:16px;">Compare</a> <a href="/tools" style="color:var(--muted);text-decoration:none;font-size:.85rem;margin-left:16px;">Tools</a></div></header>
+<main>
+  <section class="hero">
+    <h1 class="hero-title"><span class="hero-line">Free AEO</span><span class="hero-line neon">toolkit.</span></h1>
+    <p class="hero-sub">Generators that run in your browser. No API keys. No cloud.</p>
+  </section>
+  <section class="showcase"><div class="wrap">
+    <div class="tool-card">
+      <h3>JSON-LD Schema Generator</h3>
+      <input id="orgName" placeholder="Organization name" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;margin:6px 0;">
+      <input id="orgUrl" placeholder="https://yoursite.com" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;margin:6px 0;">
+      <button onclick="genSchema()" style="padding:10px 16px;background:var(--neon);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Generate</button>
+      <pre id="schemaOut" style="margin-top:12px;padding:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-size:.8rem;overflow:auto;white-space:pre-wrap;color:var(--silver);"></pre>
+    </div>
+    <div class="tool-card">
+      <h3>robots.txt Writer (2026 fleet)</h3>
+      <button onclick="genRobots()" style="padding:10px 16px;background:var(--neon);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Generate</button>
+      <pre id="robotsOut" style="margin-top:12px;padding:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-size:.8rem;overflow:auto;white-space:pre-wrap;color:var(--silver);"></pre>
+    </div>
+    <div class="tool-card">
+      <h3>llms.txt Crafter</h3>
+      <input id="siteName" placeholder="Site name" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;margin:6px 0;">
+      <input id="siteDesc" placeholder="One-line description" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;margin:6px 0;">
+      <button onclick="genLlms()" style="padding:10px 16px;background:var(--neon);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Generate</button>
+      <pre id="llmsOut" style="margin-top:12px;padding:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-size:.8rem;overflow:auto;white-space:pre-wrap;color:var(--silver);"></pre>
+    </div>
+  </div></section>
+</main>
+<footer class="site-footer"><p>&copy; 2026 Open Engine</p></footer>
+<script>
+function genSchema(){
+  const n=document.getElementById("orgName").value||"Your Org";
+  const u=document.getElementById("orgUrl").value||"https://example.com";
+  const o={ "@context":"https://schema.org","@type":"Organization","name":n,"url":u,"logo":u+"/logo.png","sameAs":[] };
+  document.getElementById("schemaOut").textContent='<script type="application/ld+json">\\n'+JSON.stringify(o,null,2)+'\\n</script>';
+}
+function genRobots(){
+  const bots=["GPTBot","OAI-SearchBot","ChatGPT-User","ClaudeBot","Claude-User","Claude-SearchBot","PerplexityBot","Perplexity-User","Google-Extended","Google-Agent","Applebot-Extended","Meta-ExternalAgent","Bingbot"];
+  let out="User-agent: *\\nAllow: /\\n\\n";
+  bots.forEach(b=>{ out+="User-agent: "+b+"\\nAllow: /\\n\\n"; });
+  out+="Sitemap: https://example.com/sitemap.xml\\n";
+  document.getElementById("robotsOut").textContent=out;
+}
+function genLlms(){
+  const n=document.getElementById("siteName").value||"Site";
+  const d=document.getElementById("siteDesc").value||"Description";
+  const out="# "+n+"\\n\\n> "+d+"\\n\\n## About\\n\\n- Home: https://example.com\\n";
+  document.getElementById("llmsOut").textContent=out;
+}
+</script>
+</body>
+</html>
